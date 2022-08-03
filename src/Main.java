@@ -1,29 +1,43 @@
 import java.util.Scanner;
+import java.awt.GraphicsDevice.WindowTranslucency;
 import java.math.*;
 public class Main {
 	String[][] boardGame = {{"-","-","-"},{"-","-","-"},{"-","-","-"}};
 	boolean gameTrue = true;
 	int fullBoard = 0;
-	boolean playerWin = false;
-	boolean botWin = false;
+	enum WinState{
+		playerWin,
+		botWin,
+		draw,
+		none
+	}
+	
+	WinState winState = WinState.none;
 	
 	public Main(){
+		
 		while(gameTrue) {
 			DrawBoardGame();
 			Menu();
-			BotMoves();
-			DrawBoardGame();
 			GameChecker();
+			if(gameTrue) {
+				BotMoves();
+				GameChecker();
+			}
 			GameResult();
 		}
+		DrawBoardGame();
 	}
 	
 	public void GameResult() {
-		if(playerWin) {
+		if(winState == WinState.playerWin) {
 			System.out.println("Player wins");
 		}
-		if(botWin) {
+		if(winState == WinState.botWin) {
 			System.out.println("Bot wins");
+		}
+		if(winState == WinState.draw) {
+			System.out.println("Draw");
 		}
 	}
 	
@@ -36,13 +50,13 @@ public class Main {
 				if(boardGame[i][j]=="O") {
 					winCondition[i][0]++;
 				}
-				if(boardGame[i][j]=="X") {
+				else if(boardGame[i][j]=="X") {
 					winCondition[i][1]++;
 				}
 				if(boardGame[j][i]=="O") {
 					winCondition[i][2]++;
 				}
-				if(boardGame[j][i]=="X") {
+				else if(boardGame[j][i]=="X") {
 					winCondition[i][3]++;
 				}
 			}
@@ -55,13 +69,13 @@ public class Main {
 			if(boardGame[i][i]=="O"){
 				winCondition[3][0]++;
 			}
-			if(boardGame[i][i]=="X"){
+			else if(boardGame[i][i]=="X"){
 				winCondition[3][1]++;
 			}
 			if(boardGame[x][i]=="O"){
 				winCondition[3][2]++;
 			}
-			if(boardGame[x][i]=="X"){
+			else if(boardGame[x][i]=="X"){
 				winCondition[3][3]++;
 			}
 			x--;
@@ -80,10 +94,10 @@ public class Main {
 			for(int j=0;j<winCondition[0].length;j++) {
 				if(winCondition[i][j]==3) {
 					if(j==0||j==2) {
-						playerWin = true;
+						winState = WinState.playerWin;
 					}
 					else {
-						botWin = true;
+						winState = WinState.botWin;
 					}
 					gameTrue = false;
 				}
@@ -116,6 +130,7 @@ public class Main {
 			if(fullBoard==9) {
 				moveValid = true;
 				gameTrue = false;
+				winState = WinState.draw;
 			}
 		}
 	}
